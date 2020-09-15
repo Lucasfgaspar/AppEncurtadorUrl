@@ -1,9 +1,38 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Clipboard, Keyboard, TouchableWithoutFeedback } from 'react-native';
 
+
+
 export default function App() {
   const [url, setUrl] = useState('');
   const [name, setname] = useState('');
+  const [urlFinal, setUrlFinal] = useState('');
+
+  const short = async () => {
+    if (url.includes('https://') || url.includes('http://')){
+      await fetch(`https://cutt.ly/api/api.php?key=5177224c6776e13fb534c3257ee6678c0b8fc&short=${url}&name=${name}`)
+      .then( async Response =>{
+        const data = await response.json();
+
+        if (data.url.status === 3){
+          alert('Esse nome ja está em uso');
+          return;
+        }
+        if (data.url.status === 2){
+          alert('url é invalida');
+          return;
+        }
+
+        console.log(data)
+        setUrlFinal(data.url.shortLink);
+        Keyboard.dismiss();
+      })
+    }
+  }
+
+  function copyUrl(){
+    Clipboard.setString(urlFinal);
+  }
 
   return (
     <TouchableWithoutFeedback onPress = {Keyboard.dismiss}>
@@ -27,11 +56,13 @@ export default function App() {
       placeholder = "Nome personalidado de Url"
       />
 
-      <TouchableOpacity onPress={() => {}} style={styles.btn}>
+      <TouchableOpacity onPress={() => short()} style={styles.btn}>
         <Text style={ {color: '#FFF'}}> Encurtar </Text>
       </TouchableOpacity>
 
-      <Text style={styles.urlfinal}> url </Text>
+      <TouchableWithoutFeedback onPress={urlFinal ? copyUrl : () => {}}>
+        <Text style={styles.urlfinal}> {urlFinal} </Text>
+      </TouchableWithoutFeedback>
 
     </View>
     </TouchableWithoutFeedback>
