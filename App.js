@@ -6,7 +6,7 @@ export default function App() {
   const [name, setname] = useState('');
 
   return (
-    <TouchableWithoutFeedback>
+    <TouchableWithoutFeedback onPress = {Keyboard.dismiss}>
     <View style={styles.container}>
       <Text style={styles.title}> 
         Encurtador de
